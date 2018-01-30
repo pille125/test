@@ -2,26 +2,31 @@ package org.dieschnittstelle.jee.esa.ejb.client.ejbclients;
 
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CustomerTrackingRemote;
 import org.dieschnittstelle.jee.esa.entities.crm.CustomerTransaction;
 import org.dieschnittstelle.jee.esa.ejb.client.Constants;
 
 public class CustomerTrackingClient implements CustomerTrackingRemote {
 
-	private CustomerTrackingRemote ejbProxy;
+	private CustomerTrackingRemote proxy;
 	
 	public CustomerTrackingClient() throws Exception {
-		ejbProxy = EJBProxyFactory.getInstance().getProxy(CustomerTrackingRemote.class,Constants.CUSTOMER_TRACKING_BEAN_URI);
+		Context context = new InitialContext();
+		proxy = (CustomerTrackingRemote) context
+				.lookup(Constants.CUSTOMER_TRACKING_BEAN);
 	}
 	
 	@Override
 	public void createTransaction(CustomerTransaction transaction) {
-		ejbProxy.createTransaction(transaction);
+		proxy.createTransaction(transaction);
 	}
 
 	@Override
 	public List<CustomerTransaction> readAllTransactions() {
-		return ejbProxy.readAllTransactions();
+		return proxy.readAllTransactions();
 	}
 
 }

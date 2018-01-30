@@ -6,14 +6,14 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlType(namespace= "http://dieschnittstelle.org/jee/esa/entities.erp")
+@Entity
 public class IndividualisedProductItem extends AbstractProduct implements Serializable {
 
 	protected static Logger logger = Logger.getLogger(IndividualisedProductItem.class);
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5109263395081656350L;
 
 	private ProductType productType;
@@ -47,7 +47,7 @@ public class IndividualisedProductItem extends AbstractProduct implements Serial
 	}
 	
 	public String toString() {
-		return "[IndividualisedProductItem " + this.getId() + ", " + this.getName() + ", " + this.productType + "]";
+		return "{IProductItem " + this.getId() + ", " + this.getName() + ", " + this.productType + "}";
 	}
 	
 	public boolean equals(Object other) {

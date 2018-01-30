@@ -20,7 +20,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 
@@ -63,16 +62,10 @@ public class Customer implements Serializable {
 
 	private String email;
 
-	/*
-	 * here, cascading has the effect that when calling merge on a transient Customer instance, which on its part
-	 * contains a transient Address instance, both instances will be persisted, see CustomerCRUDStateless
-	 */
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade={CascadeType.ALL})
 	private Address address;
 
 	@ManyToMany(mappedBy="customers")
-	// we ignore this attribute as it will cause trouble when reading a customer via the rest service due to lazy loading being enabled by default
-	@JsonIgnore
 	private Collection<AbstractTouchpoint> touchpoints = new HashSet<AbstractTouchpoint>();
 
 	@ManyToOne
@@ -83,8 +76,6 @@ public class Customer implements Serializable {
 	 */
 	@OneToMany(mappedBy="customer", fetch=FetchType.LAZY)
 	//@OneToMany(mappedBy="customer", fetch=FetchType.EAGER)
-	// we also ignore this attribute (could be commented once eager loading is active)
-	@JsonIgnore
 	private Collection<CustomerTransaction> transactions;
 	
 	public void addTouchpoint(AbstractTouchpoint touchpoint) {
@@ -168,9 +159,9 @@ public class Customer implements Serializable {
 	}
 
 	public String toString() {
-		return "[Customer " +  this.id + " " + this.firstName + " " + this.lastName
+		return "{Customer " +  this.id + " " + this.firstName + " " + this.lastName
 				+ " (" + this.gender + ") " + this.email + ", "
-				+ this.mobilePhoneId + ", " + this.address + "]";
+				+ this.mobilePhoneId + ", " + this.address + "}";
 	}
 	
 	public void setGender(Gender gd) {

@@ -4,7 +4,6 @@ import static org.dieschnittstelle.jee.esa.ejb.client.Constants.*;
 
 import org.dieschnittstelle.jee.esa.ejb.client.Constants;
 import org.dieschnittstelle.jee.esa.ejb.client.TotalUsecase;
-import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.EJBProxyFactory;
 import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.StockSystemClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +16,6 @@ public class TestShoppingSession {
 	
 	@Before
 	public void prepareContext() throws Exception {
-		EJBProxyFactory.initialise();
-
 		Constants.resetEntities();	
 		stockSystemClient = new StockSystemClient();
 	}
@@ -28,8 +25,6 @@ public class TestShoppingSession {
 		
 		TotalUsecase uc = new TotalUsecase();
 		uc.setStepping(false);
-		uc.setProvokeErrorOnPurchase(false);
-		uc.setUseShoppingSessionFacade(true);
 		
 		uc.runAll();
 		

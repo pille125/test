@@ -5,8 +5,6 @@ import java.io.File;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
-
 import org.apache.log4j.Logger;
 
 public class TouchpointServletContextListener implements ServletContextListener {
@@ -15,12 +13,12 @@ public class TouchpointServletContextListener implements ServletContextListener 
 			.getLogger(TouchpointServletContextListener.class);
 
 	public TouchpointServletContextListener() {
-		show("TouchpointServletContextListener: constructor invoked\n");
+		System.err.println("\nTouchpointServletContextListener: constructor invoked\n");
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent evt) {
-		show("TouchpointServletContextListener: contextDestroyed() invoked\n");
+		System.err.println("TouchpointServletContextListener: contextDestroyed() invoked\n");
 
 		// we read out the TouchpointCRUDExecutor and let it store its content
 		TouchpointCRUDExecutor exec = (TouchpointCRUDExecutor) evt
@@ -37,7 +35,7 @@ public class TouchpointServletContextListener implements ServletContextListener 
 
 	@Override
 	public void contextInitialized(ServletContextEvent evt) {
-		show("TouchpointServletContextListener: contextInitialised() invoked\n");
+		System.err.println("TouchpointServletContextListener: contextInitialised() invoked\n");
 		
 		// we create a new executor for a file to be stored in the context root
 		String rootPath = evt.getServletContext().getRealPath("/");

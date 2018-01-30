@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
@@ -96,7 +97,7 @@ public class StockSystemHelper {
 	private ProductCRUDRemote productCRUD;
 	@Resource(mappedName = "java:global/org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/TouchpointAccessStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.TouchpointAccessRemote")
 	private TouchpointAccessRemote touchpointAccess;
-	@Resource(mappedName = "java:global/org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.erp/StockSystemSingleton!org.dieschnittstelle.jee.esa.ejb.ejbmodule.erp.StockSystemRemote")
+	@Resource(mappedName = "java:global/org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.erp/StockSystemSingleton!org.dieschnittstelle.jee.ejb.ejbmodule.erp.StockSystemRemote")
 	private StockSystemRemote stockSystem;
 	@Resource(mappedName = "java:global/org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CustomerCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerCRUDRemote")
 	private CustomerCRUDRemote customerCRUD;
@@ -111,29 +112,24 @@ public class StockSystemHelper {
 		PRODUCT_2.setId(productCRUD.createProduct(PRODUCT_2).getId());
 
 		// TODO: consider campaigns
-		CAMPAIGN_1.setId(productCRUD.createProduct(CAMPAIGN_1).getId());
-		CAMPAIGN_2.setId(productCRUD.createProduct(CAMPAIGN_2).getId());
+		// CAMPAIGN_1.setId(productCRUD.createProduct(CAMPAIGN_1).getId());
+		// CAMPAIGN_2.setId(productCRUD.createProduct(CAMPAIGN_2).getId());
 
 		System.out.println("\n***************** created products\n");
 	}
 
 	public void createTouchpoints() {
-		try {
-			// create touchpoints
-			AbstractTouchpoint tp1 = touchpointAccess
-					.createTouchpointAndPointOfSale(TOUCHPOINT_1);
-			TOUCHPOINT_1.setId(tp1.getId());
-			TOUCHPOINT_1.setErpPointOfSaleId(tp1.getErpPointOfSaleId());
-			AbstractTouchpoint tp2 = touchpointAccess
-					.createTouchpointAndPointOfSale(TOUCHPOINT_2);
-			TOUCHPOINT_2.setId(tp2.getId());
-			TOUCHPOINT_2.setErpPointOfSaleId(tp2.getErpPointOfSaleId());
+		// create touchpoints
+		AbstractTouchpoint tp1 = touchpointAccess
+				.createTouchpoint(TOUCHPOINT_1);
+		TOUCHPOINT_1.setId(tp1.getId());
+		TOUCHPOINT_1.setErpPointOfSaleId(tp1.getErpPointOfSaleId());
+		AbstractTouchpoint tp2 = touchpointAccess
+				.createTouchpoint(TOUCHPOINT_2);
+		TOUCHPOINT_2.setId(tp2.getId());
+		TOUCHPOINT_2.setErpPointOfSaleId(tp2.getErpPointOfSaleId());
 
-			System.out.println("\n***************** created touchpoints\n");
-		}
-		catch (Exception e) {
-			throw new RuntimeException("Got exception trying to create touchpoints: " + e,e);
-		}
+		System.out.println("\n***************** created touchpoints\n");
 	}
 
 	public void createStock() {
@@ -153,9 +149,9 @@ public class StockSystemHelper {
 	public void prepareCampaigns() {
 		// create campaign executions
 		campaignTracking.addCampaignExecution(new CampaignExecution(
-				TOUCHPOINT_1, CAMPAIGN_1.getId(), 20, -1));
+				TOUCHPOINT_1, CAMPAIGN_1.getId(), 10, -1));
 		campaignTracking.addCampaignExecution(new CampaignExecution(
-				TOUCHPOINT_1, CAMPAIGN_2.getId(), 10, -1));
+				TOUCHPOINT_1, CAMPAIGN_2.getId(), 5, -1));
 
 		logger.info("campaigns are: "
 				+ campaignTracking.getAllCampaignExecutions());
@@ -173,32 +169,30 @@ public class StockSystemHelper {
 
 	/**
 	 * this must be used for JSF6
-	 *
-	 * TODO: use your ShoppingSessionFacade here - you should declare it as a @Resource obtaining a client proxy via dependency injection
+	 * 
+	 * TODO: access your ShoppingSessionFacade here - you should declare it as a @Resource obtaining a client stub via dependency injection
 	 */
 	public void doShopping() {
 		try {
-			// TODO: remove the comments once session facade is declared as an instance attribute above
+			// here, the shopping session facade should be accessed
 
-			// add a customer and a touchpoint
-//			session.setCustomer(CUSTOMER_1);
-//			session.setTouchpoint(TOUCHPOINT_1);
-//
-//			// now add items
-//			session.addProduct(PRODUCT_1, 2);
-//			session.addProduct(PRODUCT_1, 3);
-//			session.addProduct(PRODUCT_2, 2);
-//			session.addProduct(CAMPAIGN_1, 1);
-//			session.addProduct(CAMPAIGN_2, 2);
-//
-//			// now try to commit the session
-//			session.purchase();
-		}
-		catch(Exception e) {
-			throw new RuntimeException("got exception during shopping: " + e, e);
+			// // add a customer and a touchpoint
+			// session.setCustomer(CUSTOMER_1);
+			// session.setTouchpoint(TOUCHPOINT_1);
+			//
+			// // now add items
+			// session.addProduct(PRODUCT_1, 2);
+			// session.addProduct(PRODUCT_1, 3);
+			// session.addProduct(PRODUCT_2, 2);
+			// session.addProduct(CAMPAIGN_1, 1);
+			// session.addProduct(CAMPAIGN_2, 2);
+			//
+			// // now try to commit the session
+			// session.purchase();
+		} catch (Exception e) {
+			logger.error("got exception during shopping: " + e, e);
 		}
 	}
-
 
 	public void showTransactions() {
 		System.out.println("\n***************** show transactions\n");

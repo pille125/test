@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
-
 import org.dieschnittstelle.jee.esa.entities.crm.AbstractTouchpoint;
 import org.dieschnittstelle.jee.esa.entities.crm.MobileTouchpoint;
 
@@ -31,7 +29,7 @@ public class LocalRunTouchpointExecutor {
 			if ("c".equals(cmd)) {
 				AbstractTouchpoint tp = new MobileTouchpoint("01700000000");
 				tp.setName("TP" + (count++));
-				show(exec.createTouchpoint(tp));
+				exec.createTouchpoint(tp);
 			}
 			else if ("r".equals(cmd)) {
 				show(exec.readAllTouchpoints());
@@ -39,7 +37,7 @@ public class LocalRunTouchpointExecutor {
 			else if ("d".equals(cmd)) {
 				List<AbstractTouchpoint> tps = exec.readAllTouchpoints();
 				if (tps.size() > 0) {
-					show(exec.deleteTouchpoint(tps.get(0).getId()));
+					exec.deleteTouchpoint(tps.get(0).getId());
 				}				
 			}
 			else if ("s".equals(cmd)) {
@@ -66,5 +64,11 @@ public class LocalRunTouchpointExecutor {
 		
 		return "";
 	}
+	
+	public static void show(Object content) {
+		System.err.println(content + "\n");
+	}
+	
+	
 	
 }

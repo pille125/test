@@ -19,17 +19,15 @@ public class Constants {
 	/*
 	 * the bean identifiers
 	 */
-	public static final String SHOPPING_CART_BEAN_URI = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/ShoppingCartStateful!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingCartRemote?stateful";
-	public static final String CAMPAIGN_TRACKING_BEAN_URI = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CampaignTrackingSingleton!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CampaignTrackingRemote";
-	public static final String CUSTOMER_TRACKING_BEAN_URI = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/customerTrackingSystem!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CustomerTrackingRemote";
-	public static final String CUSTOMER_CRUD_BEAN_URI = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CustomerCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerCRUDRemote";
-	public static final String TOUCHPOINT_ACCESS_BEAN_URI = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/TouchpointAccessStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.TouchpointAccessRemote";
-	public static final String TRANSACTIONS_CRUD_BEAN_URI = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CustomerTransactionCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerTransactionCRUDRemote";
-
-	/*
-	 * the base url of the web api
-	 */
-	public static final String WEB_API_BASE_URL = "http://localhost:8080/org.dieschnittstelle.jee.esa.ejb.webapp/api/";
+	public static final String SHOPPING_CART_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/ShoppingCartStateful!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingCartRemote?stateful";
+	public static final String CAMPAIGN_TRACKING_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CampaignTrackingSingleton!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CampaignTrackingRemote";
+	public static final String CUSTOMER_TRACKING_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/customerTrackingSystem!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CustomerTrackingRemote";
+	public static final String CUSTOMER_CRUD_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CustomerCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerCRUDRemote";
+	public static final String TOUCHPOINT_CRUD_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/TouchpointCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.TouchpointCRUDRemote";
+	public static final String TOUCHPOINT_ACCESS_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/TouchpointAccessStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.TouchpointAccessRemote";
+	public static final String TRANSACTIONS_CRUD_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/CustomerTransactionCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerTransactionCRUDRemote";
+	public static final String POS_CRUD_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.erp/PointOfSaleCRUDStateless!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.PointOfSaleCRUDRemote";
+	public static final String STOCK_SYSTEM_BEAN = "ejb:org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.erp/StockSystemSingleton!org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.StockSystemRemote";
 
 	/*
 	 * constants for the objects that are dealt with in the different accessors
@@ -84,16 +82,14 @@ public class Constants {
 		// CAMPAIGN_2.setId(4);
 		CAMPAIGN_2.addBundle(new ProductBundle(PRODUCT_2, 3));
 
-        // use a shared address for the two customers
-		Address addr3 = new Address("Kopernikusstrasse", "11", "10245",
-				"Berlin");
-
 		CUSTOMER_1 = new Customer("Anna", "Musterfrau", Gender.W);
-		CUSTOMER_1.setAddress(addr3);
+		CUSTOMER_1.setAddress(new Address("Kopernikusstrasse", "11", "10245",
+				"Berlin"));
 		CUSTOMER_1.setEmail("anna@example.com");
 
 		CUSTOMER_2 = new Customer("Benedikt", "Mustermann", Gender.M);
-		CUSTOMER_2.setAddress(addr3);
+		CUSTOMER_2.setAddress(new Address("Corinthstrasse", "44", "10245",
+				"Berlin"));
 		CUSTOMER_2.setEmail("bene@example.com");
 	}
 
@@ -103,9 +99,9 @@ public class Constants {
 	// be defaulted to any value different from 0 (e.g. -1)
 	public static void resetEntities() {
 		TOUCHPOINT_1.setId(0);
-		TOUCHPOINT_1.getAddress().setId(0);
+		TOUCHPOINT_1.getLocation().setId(0);
 		TOUCHPOINT_2.setId(0);
-		TOUCHPOINT_2.getAddress().setId(0);
+		TOUCHPOINT_2.getLocation().setId(0);
 		TOUCHPOINT_3.setId(0);
 		PRODUCT_1.setId(0);
 		PRODUCT_2.setId(0);

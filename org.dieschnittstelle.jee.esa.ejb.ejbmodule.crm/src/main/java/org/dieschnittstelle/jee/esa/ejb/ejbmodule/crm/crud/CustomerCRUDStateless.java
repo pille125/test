@@ -12,30 +12,36 @@ public class CustomerCRUDStateless implements CustomerCRUDRemote, CustomerCRUDLo
 
 	protected static Logger logger = Logger.getLogger(CustomerCRUDStateless.class);
 	
-	@PersistenceContext(unitName = "crm_PU")
+	@PersistenceContext(unitName = "crm_erp_PU")
 	private EntityManager em;
 	
 	@Override
 	public Customer createCustomer(Customer customer) {
+		logger.info("createCustomer(): before persist(): " + customer);
+		em.persist(customer);
 
-		// using merge rather than persist here will result in persisting the Customer instance, as well as its
-		// address value in case the latter has not been persisted yet
-		customer = em.merge(customer);
+		logger.info("createdCustomer(): after persist(): " + customer);
 
 		return customer;
 	}
 
 	@Override
 	public Customer readCustomer(long id) {
+		logger.info("readCustomer(): " + id);
+
 		Customer customer = em.find(Customer.class, id);
 
+		logger.info("readCustomer(): " + customer);
+		
 		return customer;
 	}
 
 	@Override
 	public Customer updateCustomer(Customer customer) {
+		logger.info("updateCustomer(): before merge(): " + customer);
 		customer = em.merge(customer);
-
+		
+		logger.info("updateCustomer(): after merge(): " + customer);
 		return customer;
 	}
 	
@@ -63,8 +69,12 @@ public class CustomerCRUDStateless implements CustomerCRUDRemote, CustomerCRUDLo
 
 	@Override
 	public boolean deleteCustomer(int id) {
+		logger.info("deleteCustomer(): " + id);
+		
 		em.remove(em.find(Customer.class,id));
-
+				
+		logger.info("deleteCustomer(): done");
+		
 		return true;
 	}
 

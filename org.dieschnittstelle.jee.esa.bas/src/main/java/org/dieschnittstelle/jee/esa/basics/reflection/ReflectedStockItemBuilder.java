@@ -13,8 +13,6 @@ import org.w3c.dom.NodeList;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
-
 // this builder only reads in the 
 public class ReflectedStockItemBuilder implements IStockItemBuilder {
 
@@ -57,11 +55,11 @@ public class ReflectedStockItemBuilder implements IStockItemBuilder {
 			IStockItem instance = (IStockItem) klass.newInstance();
 
 //			for (Field field : klass.getDeclaredFields()) {
-//				show("found field: " + field.getClass() + " of name " + field.getName());
+//				System.err.println("found field: " + field.getClass() + " of name " + field.getName());
 //			}
 //			
 //			for (Method method : klass.getDeclaredMethods()) {
-//				show("found method: " + method.getClass() + " of name " + method.getName());
+//				System.err.println("found method: " + method.getClass() + " of name " + method.getName());
 //			}
 						
 			instance.initialise(Integer.parseInt(instanceAttributes.get("units")),
