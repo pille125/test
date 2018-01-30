@@ -1,13 +1,19 @@
 package org.dieschnittstelle.jee.esa.ser.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -15,7 +21,7 @@ import org.dieschnittstelle.jee.esa.entities.crm.AbstractTouchpoint;
 import org.dieschnittstelle.jee.esa.entities.crm.Address;
 import org.dieschnittstelle.jee.esa.entities.crm.StationaryTouchpoint;
 
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
+import static org.dieschnittstelle.jee.esa.utils.Utils.show;
 
 public class ShowTouchpointService {
 
@@ -79,7 +85,7 @@ public class ShowTouchpointService {
 
 		createNewTouchpoint(tp);
 
-		show("TestTouchpointService: done.\n");
+		System.err.println("TestTouchpointService: done.\n");
 	}
 
 	/**
@@ -97,11 +103,11 @@ public class ShowTouchpointService {
 			// UE SER1: Aendern Sie die URL von api->gui
 			HttpGet get = new HttpGet(
 					"http://localhost:8888/org.dieschnittstelle.jee.esa.ser/api/touchpoints");
-			// mittels der <request>.setHeader() Methode koennen Header-Felder
-			// gesetzt werden
-
 			// execute the method and obtain the response
 			HttpResponse response = client.execute(get);
+
+			// mittels der response.setHeader() Methode koennen Header-Felder
+			// gesetzt werden
 
 			// check the response status
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -141,12 +147,27 @@ public class ShowTouchpointService {
 	 * @param tp
 	 */
 	public void deleteTouchpoint(AbstractTouchpoint tp) {
-		logger.info("deleteTouchpoint(): will delete: " + tp);
+		logger.info("deleteTouchpoint(): " + tp);
 
-		// once you have received a response this is necessary to be able to
-		// use the client for subsequent requests:
-		// EntityUtils.consume(response.getEntity());
 
+        HttpDelete delete = new HttpDelete("http://localhost:8888/org.dieschnittstelle.jee.esa.ser/api/touchpoints/"
+				+ tp.getId());
+
+        try {
+            HttpResponse response = client.execute(delete);
+            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT){
+                logger.info("Touchpoint " + tp + " successfully deleted");
+            }else {
+                String err = "could not successfully execute request. Got status code: "
+                        + response.getStatusLine().getStatusCode();
+                logger.error(err);
+                throw new RuntimeException(err);
+            }
+			EntityUtils.consume(response.getEntity());
+        } catch (IOException e) {
+            logger.error("Error: ", e);
+            e.printStackTrace();
+        }
 	}
 
 	/**
@@ -160,46 +181,57 @@ public class ShowTouchpointService {
 	 * @param tp
 	 */
 	public AbstractTouchpoint createNewTouchpoint(AbstractTouchpoint tp) {
-		logger.info("createNewTouchpoint(): will create: " + tp);
+		logger.info("createNewTouchpoint(): " + tp);
 
 		try {
-
 			// create post request for the api/touchpoints uri
+			HttpPost request = new HttpPost("http://localhost:8888/org.dieschnittstelle.jee.esa.ser/api/touchpoints");
 
 			// create an ObjectOutputStream from a ByteArrayOutputStream - the
 			// latter must be accessible via a variable
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
 
 			// write the object to the output stream
+			oos.writeObject(tp);
 
 			// create a ByteArrayEntity and pass it the byte array from the
 			// output stream
+			ByteArrayEntity entity = new ByteArrayEntity(bos.toByteArray());
 
 			// set the entity on the request
+			request.setEntity(entity);
 
 			// execute the request, which will return a HttpResponse object
+			HttpResponse response = client.execute(request);
 
 			// log the status line
+			show(response.getStatusLine());
 
 			// evaluate the result using getStatusLine(), use constants in
 			// HttpStatus
 
 			/* if successful: */
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				// create an object input stream using getContent() from the
+				// response entity (accessible via getEntity())
+				ObjectInputStream ois = new ObjectInputStream(response.getEntity().getContent());
 
-			// create an object input stream using getContent() from the
-			// response entity (accessible via getEntity())
+				// read the touchpoint object from the input stream
+				AbstractTouchpoint receivedTp = (AbstractTouchpoint) ois.readObject();
 
-			// read the touchpoint object from the input stream
+				// cleanup the request
+				EntityUtils.consume(response.getEntity());
 
-			// cleanup the request
-			// EntityUtils.consume(response.getEntity());
+				// return the object that you hae read from the response
+				return receivedTp;
+			}
 
-			// return the object that you hae read from the response
 			return null;
 		} catch (Exception e) {
 			logger.error("got exception: " + e, e);
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	/**

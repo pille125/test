@@ -1,7 +1,15 @@
 package org.dieschnittstelle.jee.esa.jrs;
 
+import org.dieschnittstelle.jee.esa.entities.erp.AbstractProduct;
 import org.dieschnittstelle.jee.esa.entities.erp.IndividualisedProductItem;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import java.util.List;
 
 /*
@@ -18,17 +26,28 @@ import java.util.List;
 /*
  * UE JRS3: aendern Sie Argument- und Rueckgabetypen der Methoden von IndividualisedProductItem auf AbstractProduct
  */
+@Path("/products")
+@Consumes({ "application/json" })
+@Produces({ "application/json" })
 public interface IProductCRUDService {
 
-	public IndividualisedProductItem createProduct(IndividualisedProductItem prod);
+	@POST
+	public AbstractProduct createProduct(AbstractProduct prod);
 
-	public List<IndividualisedProductItem> readAllProducts();
+	@GET
+	public List<AbstractProduct> readAllProducts();
 
-	public IndividualisedProductItem updateProduct(long id,
-												   IndividualisedProductItem update);
+	@PUT
+	@Path("/{productId}")
+	public AbstractProduct updateProduct(@PathParam("productId") long id,
+                                         AbstractProduct update);
 
-	boolean deleteProduct(long id);
+	@PUT
+	@Path("/{productId}")
+	boolean deleteProduct(@PathParam("productId") long id);
 
-	public IndividualisedProductItem readProduct(long id);
-			
+	@GET
+	@Path("/{productId}")
+	public AbstractProduct readProduct(@PathParam("productId") long id);
+
 }

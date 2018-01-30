@@ -1,6 +1,7 @@
 package org.dieschnittstelle.jee.esa.jsf.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -310,7 +311,7 @@ public class ShoppingSessionViewController implements Serializable {
 	 */
 	public String purchaseProducts() {
 		logger.info("purchaseProducts(): "
-				+ shoppingCartModel.getItems());
+				+ shoppingCartModel.getProductBundles());
 
 		// we clear the shopping cart through invalidating the session, i.e. on
 		// the next request a new session should be created

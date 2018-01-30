@@ -38,7 +38,7 @@ public class TestTouchpointService {
 		assertTrue("created touchpoint coincides with local copy", tp.getName()
 				.equals(createdTp.getName()));
 		assertNotNull("created touchpoint contains embedded address",
-				((StationaryTouchpoint) createdTp).getAddress());
+				((StationaryTouchpoint) createdTp).getLocation());
 
 		// delete the new touchpoint
 		client.deleteTouchpoint(tp);

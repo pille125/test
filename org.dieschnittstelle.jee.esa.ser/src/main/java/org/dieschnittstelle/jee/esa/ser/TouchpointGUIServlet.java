@@ -9,22 +9,20 @@ import org.apache.log4j.Logger;
 import org.dieschnittstelle.jee.esa.entities.crm.Address;
 import org.dieschnittstelle.jee.esa.entities.crm.StationaryTouchpoint;
 
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
-
 public class TouchpointGUIServlet extends HttpServlet {
 
 	protected static Logger logger = Logger
 			.getLogger(TouchpointGUIServlet.class);
 
 	public TouchpointGUIServlet() {
-		show("TouchpointGUIServlet: constructor invoked\n");
+		System.err.println("TouchpointGUIServlet: constructor invoked\n");
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		show("TouchpointGUIServlet: doGet() invoked\n");
+		System.err.println("TouchpointGUIServlet: doGet() invoked\n");
 
 		displayView(request, response);
 	}
@@ -33,7 +31,7 @@ public class TouchpointGUIServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		show("TouchpointGUIServlet: doPost() invoked\n");
+		System.err.println("TouchpointGUIServlet: doPost() invoked\n");
 		
 		// obtain the executor
 		TouchpointCRUDExecutor exec = (TouchpointCRUDExecutor) getServletContext()

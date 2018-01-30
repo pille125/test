@@ -6,22 +6,16 @@ import static org.dieschnittstelle.jee.esa.ejb.client.Constants.TOUCHPOINT_1;
 import static org.dieschnittstelle.jee.esa.ejb.client.Constants.TOUCHPOINT_2;
 
 import org.apache.log4j.Logger;
-import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.EJBProxyFactory;
-import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingException;
 import org.dieschnittstelle.jee.esa.utils.Utils;
 import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.ProductCRUDClient;
 import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.StockSystemClient;
 import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.TouchpointAccessClient;
-
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
 
 public class ShowStockSystem {
 
 	protected static Logger logger = Logger.getLogger(ShowStockSystem.class);
 
 	public static void main(String[] args) {
-		EJBProxyFactory.initialise();
-
 		try {
 			(new ShowStockSystem()).runAll();
 		} catch (Exception e) {
@@ -84,15 +78,10 @@ public class ShowStockSystem {
 
 	public void createTouchpoints() {
 		// create touchpoints
-		try {
-			touchpointCRUD.createTouchpointAndPointOfSale(TOUCHPOINT_1);
-			touchpointCRUD.createTouchpointAndPointOfSale(TOUCHPOINT_2);
+		touchpointCRUD.createTouchpoint(TOUCHPOINT_1);
+		touchpointCRUD.createTouchpoint(TOUCHPOINT_2);
 
-			System.out.println("\n***************** created touchpoints\n");
-		}
-		catch (ShoppingException e) {
-			throw new RuntimeException("createTouchpoints(): got exception: " + e,e);
-		}
+		System.out.println("\n***************** created touchpoints\n");
 	}
 	
 	public void createStock() {
@@ -107,6 +96,10 @@ public class ShowStockSystem {
 //				TOUCHPOINT_2.getErpPointOfSaleId(), 100);
 
 		System.out.println("\n***************** created stock\n");
+	}
+
+	public static void show(Object content) {
+		System.err.println(content + "\n");
 	}
 
 }

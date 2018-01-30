@@ -17,7 +17,8 @@ import org.dieschnittstelle.jee.esa.entities.crm.StationaryTouchpoint;
 import org.dieschnittstelle.jee.esa.entities.GenericCRUDExecutor;
 import org.apache.log4j.Logger;
 
-@WebService(targetNamespace = "http://dieschnittstelle.org/jee/esa/jws", serviceName = "TouchpointCRUDWebService")
+//@WebService(targetNamespace = "http://dieschnittstelle.org/jee/esa/jws", serviceName = "TouchpointCRUDWebService")
+@WebService(targetNamespace = "http://dieschnittstelle.org/jee/esa/entities/crm", serviceName = "TouchpointCRUDWebService")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 public class TouchpointCRUDWebServiceSOAP {
 
@@ -48,7 +49,7 @@ public class TouchpointCRUDWebServiceSOAP {
 		logger.info("readAllTouchpoints()");
 
 		logger.info("readAllTouchpoints(): I am: " + this);
-		
+
 		// we obtain the servlet context from the wscontext
 		ServletContext ctx = (ServletContext) wscontext.getMessageContext()
 				.get(MessageContext.SERVLET_CONTEXT);
@@ -62,7 +63,7 @@ public class TouchpointCRUDWebServiceSOAP {
 				.getAttribute("touchpointCRUD");
 		logger.info("readAllTouchpoints(): read touchpointCRUD from servletContext: "
 				+ touchpointCRUD);
-		
+
 		// check that more than one requests is handled by the same instance of this class simulataneously
 //		try {
 //			Thread.sleep(30000);
@@ -94,9 +95,16 @@ public class TouchpointCRUDWebServiceSOAP {
 
 		return touchpointCRUD.deleteObject(id);
 	}
-	
+
 	/*
 	 * UE JWS3: erweitern Sie den Service
 	 */
-
+    @WebMethod
+    public AbstractTouchpoint updateTouchpoint(long id, AbstractTouchpoint touchpoint) {
+        GenericCRUDExecutor<AbstractTouchpoint> touchpointCRUD = (GenericCRUDExecutor<AbstractTouchpoint>) ((ServletContext) wscontext
+                .getMessageContext().get(MessageContext.SERVLET_CONTEXT))
+                .getAttribute("touchpointCRUD");
+        touchpointCRUD.updateObject(touchpoint);
+        return touchpointCRUD.readObject(id);
+    }
 }

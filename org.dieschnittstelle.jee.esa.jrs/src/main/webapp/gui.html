@@ -46,12 +46,12 @@ function createTouchpoint(createForm) {
 
 	var touchpoint = new Object();
 	touchpoint.name = createForm.name.value;
-	touchpoint.address = new Object();
-	touchpoint.address.street = createForm.street.value;
-	touchpoint.address.houseNr = createForm.houseNr.value;
-	touchpoint.address.zipCode = createForm.zipCode.value;
-	touchpoint.address.city = createForm.city.value;
-	touchpoint["@class"] = "org.dieschnittstelle.jee.esa.entities.crm.StationaryTouchpoint";
+	touchpoint.location = new Object();
+	touchpoint.location.street = createForm.street.value;
+	touchpoint.location.houseNr = createForm.houseNr.value;
+	touchpoint.location.zipCode = createForm.zipCode.value;
+	touchpoint.location.city = createForm.city.value;
+	//touchpoint["@class"] = "org.dieschnittstelle.jee.esa.entities.crm.StationaryTouchpoint";
 
 	//alert("createdTouchpoint: " + JSON.stringify(touchpoint));
 
@@ -97,6 +97,8 @@ function callWebapp(method, requestpath, obj, onsuccess, onerror) {
 
 	// set the header that we only accept json content
 	xmlhttp.setRequestHeader("Accept", "application/json");
+
+	xmlhttp.setRequestHeader("Connection", "close");
 
 	// define the callback function using our own callback arguments
 	xmlhttp.onreadystatechange = function() {
@@ -190,19 +192,19 @@ function drawTouchpointsTable() {
 			// street
 			td= document.createElement("td");
 			tr.appendChild(td);
-			td.appendChild(document.createTextNode(currentTouchpoint.address.street));
+			td.appendChild(document.createTextNode(currentTouchpoint.location.street));
 			// houseNr
 			td = document.createElement("td");
 			tr.appendChild(td);
-			td.appendChild(document.createTextNode(currentTouchpoint.address.houseNr));
+			td.appendChild(document.createTextNode(currentTouchpoint.location.houseNr));
 			// zipCode
 			td = document.createElement("td");
 			tr.appendChild(td);
-			td.appendChild(document.createTextNode(currentTouchpoint.address.zipCode));
+			td.appendChild(document.createTextNode(currentTouchpoint.location.zipCode));
 			// city
 			td = document.createElement("td");
 			tr.appendChild(td);
-			td.appendChild(document.createTextNode(currentTouchpoint.address.city));
+			td.appendChild(document.createTextNode(currentTouchpoint.location.city));			
 
 			// now create the delete form
 			td = document.createElement("td");

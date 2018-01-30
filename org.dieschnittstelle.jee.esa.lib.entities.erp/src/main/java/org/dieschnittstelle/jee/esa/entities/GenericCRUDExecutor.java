@@ -1,7 +1,5 @@
 package org.dieschnittstelle.jee.esa.entities;
 
-import org.apache.log4j.Logger;
-
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,8 +17,6 @@ import java.util.List;
  * 
  */
 public class GenericCRUDExecutor<T extends GenericCRUDEntity> {
-
-	protected static Logger logger = Logger.getLogger(GenericCRUDExecutor.class);
 
 	/**
 	 * the id counter
@@ -76,8 +72,8 @@ public class GenericCRUDExecutor<T extends GenericCRUDEntity> {
 		try {
 			return this.objects.remove(readObject(toDeleteId));
 		} catch (Exception e) {
-			logger.error("got an exception trying to delete object for id "
-					+ toDeleteId + ". Supposedly, this object does not exist.",e);
+			System.err.println("got an exception trying to delete object for id "
+					+ toDeleteId + ". Supposedly, this object does not exist.");
 			return false;
 		}
 	}
@@ -139,8 +135,9 @@ public class GenericCRUDExecutor<T extends GenericCRUDEntity> {
 			System.out.println("we have reached the end of the data file");
 		} catch (Exception e) {
 			String err = "got exception: " + e;
-			logger.error(err,e);
-			throw new RuntimeException(err,e);
+			System.err.println(err);
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
 		System.out.println("load(): objects are: " + objects);
@@ -164,8 +161,9 @@ public class GenericCRUDExecutor<T extends GenericCRUDEntity> {
 			}
 		} catch (Exception e) {
 			String err = "got exception: " + e;
-			logger.error(err,e);
-			throw new RuntimeException(err,e);
+			System.err.println(err);
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
 		System.out.println("store(): done.");

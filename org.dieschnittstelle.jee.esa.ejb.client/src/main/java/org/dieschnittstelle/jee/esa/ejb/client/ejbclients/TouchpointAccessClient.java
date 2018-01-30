@@ -2,27 +2,30 @@ package org.dieschnittstelle.jee.esa.ejb.client.ejbclients;
 
 import java.util.List;
 
-import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.TouchpointAccessRemote;
 import org.dieschnittstelle.jee.esa.entities.crm.AbstractTouchpoint;
 import org.dieschnittstelle.jee.esa.ejb.client.Constants;
 
 public class TouchpointAccessClient implements TouchpointAccessRemote {
 	
-	private TouchpointAccessRemote ejbProxy;
+	private TouchpointAccessRemote touchpointAccessProxy;
 	
 	public TouchpointAccessClient() throws Exception {
-		this.ejbProxy = EJBProxyFactory.getInstance().getProxy(TouchpointAccessRemote.class,Constants.TOUCHPOINT_ACCESS_BEAN_URI);
+		Context context = new InitialContext();
+		this.touchpointAccessProxy = (TouchpointAccessRemote) context.lookup(Constants.TOUCHPOINT_ACCESS_BEAN);
 	}
 	
 	
 	public List<AbstractTouchpoint> readAllTouchpoints() {
-		return ejbProxy.readAllTouchpoints();
+		return touchpointAccessProxy.readAllTouchpoints();
 	}
 
 	@Override
-	public AbstractTouchpoint createTouchpointAndPointOfSale(AbstractTouchpoint touchpoint) throws ShoppingException {
-		AbstractTouchpoint created = ejbProxy.createTouchpointAndPointOfSale(touchpoint);
+	public AbstractTouchpoint createTouchpoint(AbstractTouchpoint touchpoint) {
+		AbstractTouchpoint created = touchpointAccessProxy.createTouchpoint(touchpoint);
 		touchpoint.setId(created.getId());
 		touchpoint.setErpPointOfSaleId(created.getErpPointOfSaleId());
 		

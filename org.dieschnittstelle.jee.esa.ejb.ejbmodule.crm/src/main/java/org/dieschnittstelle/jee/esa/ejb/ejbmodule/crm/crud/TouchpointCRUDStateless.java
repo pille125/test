@@ -18,7 +18,7 @@ public class TouchpointCRUDStateless implements TouchpointCRUDRemote,
 	protected static Logger logger = Logger
 			.getLogger(TouchpointCRUDStateless.class);
 
-	@PersistenceContext(unitName = "crm_PU")
+	@PersistenceContext(unitName = "crm_erp_PU")
 	private EntityManager em;
 
 	/*
@@ -26,16 +26,20 @@ public class TouchpointCRUDStateless implements TouchpointCRUDRemote,
 	 */
 	@Override
 	//@TransactionAttribute(TransactionAttributeType.MANDATORY)
-	public AbstractTouchpoint createTouchpoint(AbstractTouchpoint touchpoint) throws ShoppingException {
+	public AbstractTouchpoint createTouchpoint(AbstractTouchpoint touchpoint) {
 
 		/*
 		 * UE ADD1: swap true/false
 		 */		
 		if (/*true*/false) {
-			throw new RuntimeException(new ShoppingException(
-					ShoppingException.ShoppingSessionExceptionReason.UNKNOWN));
+			throw new ShoppingException(
+					ShoppingException.ShoppingSessionExceptionReason.UNKNOWN);
 		} else {
+			logger.info("createTouchpoint(): before persist(): " + touchpoint);
 			em.persist(touchpoint);
+
+			logger.info("createTouchpoint(): after persist(): " + touchpoint);
+
 			return touchpoint;
 		}
 
@@ -43,30 +47,45 @@ public class TouchpointCRUDStateless implements TouchpointCRUDRemote,
 
 	@Override
 	public AbstractTouchpoint readTouchpoint(long id) {
+		logger.info("readTouchpoint(): " + id);
+
 		AbstractTouchpoint touchpoint = em.find(AbstractTouchpoint.class, id);
+
+		logger.info("readTouchpoint(): " + touchpoint);
 
 		return touchpoint;
 	}
 
 	@Override
 	public AbstractTouchpoint updateTouchpoint(AbstractTouchpoint touchpoint) {
+		logger.info("updateTouchpoint(): before merge(): " + touchpoint);
 		touchpoint = em.merge(touchpoint);
+
+		logger.info("updateTouchpoint(): after merge(): " + touchpoint);
 		return touchpoint;
 	}
 
 	@Override
 	public boolean deleteTouchpoint(int id) {
+		logger.info("deleteTouchpoint(): " + id);
+
 		em.remove(em.find(AbstractTouchpoint.class, id));
+
+		logger.info("deleteTouchpoint(): done");
 
 		return true;
 	}
 
 	@Override
 	public List<AbstractTouchpoint> readAllTouchpoints() {
+		logger.info("readAllTouchpoints()");
+
 		Query query = em.createQuery("FROM AbstractTouchpoint");
 
 		List<AbstractTouchpoint> tps = (List<AbstractTouchpoint>) query
 				.getResultList();
+
+		logger.info("readAllTouchpoints(): " + tps);
 
 		return tps;
 	}

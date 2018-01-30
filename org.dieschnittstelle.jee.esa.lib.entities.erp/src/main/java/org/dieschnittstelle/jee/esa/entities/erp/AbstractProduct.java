@@ -6,10 +6,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.log4j.Logger;
 import org.dieschnittstelle.jee.esa.entities.GenericCRUDEntity;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+
 /*
  * UE JRS3: entfernen Sie die Auskommentierung der Annotation
  */
-//@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
+@XmlType(namespace= "http://dieschnittstelle.org/jee/esa/entities.erp")
+@XmlSeeAlso({org.dieschnittstelle.jee.esa.entities.erp.IndividualisedProductItem.class})
+@Entity
 public abstract class AbstractProduct implements Serializable, GenericCRUDEntity {
 
 	protected static Logger logger = Logger.getLogger(AbstractProduct.class);
@@ -19,6 +26,9 @@ public abstract class AbstractProduct implements Serializable, GenericCRUDEntity
 	 */
 	private static final long serialVersionUID = 6940403029597060153L;
 
+	@Id
+	@SequenceGenerator(name="abstractProductSeq", allocationSize = 1, initialValue = 1)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="abstractProductSeq") // independent ids generated like this?
 	private long id;
 
 	private String name;
