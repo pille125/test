@@ -6,9 +6,8 @@ import org.apache.log4j.Logger;
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CampaignTrackingRemote;
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.CustomerTrackingRemote;
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingCartRemote;
-import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingException;
 import org.dieschnittstelle.jee.esa.entities.crm.AbstractTouchpoint;
-import org.dieschnittstelle.jee.esa.entities.crm.ShoppingCartItem;
+import org.dieschnittstelle.jee.esa.entities.crm.CrmProductBundle;
 import org.dieschnittstelle.jee.esa.entities.crm.Customer;
 import org.dieschnittstelle.jee.esa.entities.crm.CustomerTransaction;
 import org.dieschnittstelle.jee.esa.ejb.client.ejbclients.CampaignTrackingClient;
@@ -42,6 +41,12 @@ public class ShoppingSession implements ShoppingBusinessDelegate {
 
 	public ShoppingSession() {
 		logger.info("<constructor>");
+	}
+
+	/**
+	 * access the beans that we need
+	 */
+	public void initialise() {
 		try {
 			this.campaignTracking = new CampaignTrackingClient();
 			this.customerTracking = new CustomerTrackingClient();
@@ -60,34 +65,34 @@ public class ShoppingSession implements ShoppingBusinessDelegate {
 	}
 
 	public void addProduct(AbstractProduct product, int units) {
-		this.shoppingCart.addItem(new ShoppingCartItem(product.getId(), units, product instanceof Campaign));
+		this.shoppingCart.addProductBundle(new CrmProductBundle(product.getId(), units, product instanceof Campaign));
 	}
 
 	/*
 	 * verify whether campaigns are still valid
 	 */
-	public void verifyCampaigns() throws ShoppingException {
+	public void verifyCampaigns() {
 		if (this.customer == null || this.touchpoint == null) {
 			throw new RuntimeException("cannot verify campaigns! No touchpoint has been set!");
 		}
 
-		for (ShoppingCartItem item : this.shoppingCart.getItems()) {
-			if (item.isCampaign()) {
+		for (CrmProductBundle productBundle : this.shoppingCart.getProductBundles()) {
+			if (productBundle.isCampaign()) {
 				int availableCampaigns = this.campaignTracking.existsValidCampaignExecutionAtTouchpoint(
-						item.getErpProductId(), this.touchpoint);
-				logger.info("got available campaigns for product " + item.getErpProductId() + ": "
+						productBundle.getErpProductId(), this.touchpoint);
+				logger.info("got available campaigns for product " + productBundle.getErpProductId() + ": "
 						+ availableCampaigns);
 				// we check whether we have sufficient campaign items available
-				if (availableCampaigns < item.getUnits()) {
-					throw new ShoppingException("verifyCampaigns() failed for productBundle " + item
-							+ " at touchpoint " + this.touchpoint + "! Need " + item.getUnits()
+				if (availableCampaigns < productBundle.getUnits()) {
+					throw new RuntimeException("verifyCampaigns() failed for productBundle " + productBundle
+							+ " at touchpoint " + this.touchpoint + "! Need " + productBundle.getUnits()
 							+ " instances of campaign, but only got: " + availableCampaigns);
 				}
 			}
 		}
 	}
 
-	public void purchase()  throws ShoppingException {
+	public void purchase() {
 		logger.info("purchase()");
 
 		if (this.customer == null || this.touchpoint == null) {
@@ -103,7 +108,7 @@ public class ShoppingSession implements ShoppingBusinessDelegate {
 		checkAndRemoveProductsFromStock();
 
 		// then we add a new customer transaction for the current purchase
-		List<ShoppingCartItem> products = this.shoppingCart.getItems();
+		List<CrmProductBundle> products = this.shoppingCart.getProductBundles();
 		CustomerTransaction transaction = new CustomerTransaction(this.customer, this.touchpoint, products);
 		transaction.setCompleted(true);
 		customerTracking.createTransaction(transaction);
@@ -117,25 +122,29 @@ public class ShoppingSession implements ShoppingBusinessDelegate {
 	private void checkAndRemoveProductsFromStock() {
 		logger.info("checkAndRemoveProductsFromStock");
 
-		for (ShoppingCartItem item : this.shoppingCart.getItems()) {
-
-			// TODO: ermitteln Sie das AbstractProduct für das gegebene item. Nutzen Sie dafür dessen erpProductId und die ProductCRUD EJB
-
-			if (item.isCampaign()) {
-				this.campaignTracking.purchaseCampaignAtTouchpoint(item.getErpProductId(), this.touchpoint,
-						item.getUnits());
-				// TODO: wenn Sie eine Kampagne haben, muessen Sie hier
-				// 1) dann ueber die ProductBundle Objekte auf dem Campaign Objekt iterieren und
-				// 2) fuer jedes ProductBundle das betreffende Produkt in der auf dem Bundle angegebenen Anzahl, multipliziert mit dem Wert von
+		for (CrmProductBundle productBundle : this.shoppingCart.getProductBundles()) {
+			if (productBundle.isCampaign()) {
+				this.campaignTracking.purchaseCampaignAtTouchpoint(productBundle.getErpProductId(), this.touchpoint,
+						productBundle.getUnits());
+				// wenn Sie eine Kampagne haben, muessen Sie hier
+				// 1) zunaechst das Campaign-Objekt anhand der erpProductId von productBundle auslesen
+				// 2) dann ueber die ProductBundle Objekte auf dem Campaign Objekt iterieren und
+				// 3) fuer jedes ProductBundle das betreffende Produkt in der auf dem Bundle angegebenen Anzahl, multipliziert mit dem Wert von 
 				// productBundle.getUnits() aus dem Warenkorb, 
 				// - hinsichtlich Verfuegbarkeit ueberpruefen, und
-				// - falls verfuegbar aus dem Warenlager entfernen - nutzen Sie dafür die StockSystem EJB
+				// - falls verfuegbar aus dem Warenlager entfernen 
 				// (Anm.: productBundle.getUnits() sagt Ihnen, wie oft ein Produkt, im vorliegenden Fall eine Kampagne, im
 				// Warenkorb liegt)
 			} else {
-				// TODO: andernfalls (wenn keine Kampagne vorliegt) muessen Sie
-				// 1) das Produkt in der in productBundle.getUnits() angegebenen Anzahl hinsichtlich Verfuegbarkeit ueberpruefen und
-				// 2) das Produkt, falls verfuegbar, aus dem Warenlager entfernen
+				// andernfalls (wenn keine Kampagne vorliegt) muessen Sie
+				// 1) das Produkt (dann IndividualisedProductItem) anhand der erpProductId von productBundle auslesen, und
+				// 2) das Produkt in der in productBundle.getUnits() angegebenen Anzahl hinsichtlich Verfuegbarkeit ueberpruefen und 
+				// 3) das Produkt, falls verfuegbar, aus dem Warenlager entfernen
+
+				// Schritt 1) koennen Sie ggf. auch mit Typ AbstractProduct vor
+				// die if/else Verzweigung bezueglich isCampaign() platzieren -
+				// in jedem Fall benoetigen Sie hierfuer Zugriff auf Ihre
+				// ProductCRUD EJB
 			}
 
 		}

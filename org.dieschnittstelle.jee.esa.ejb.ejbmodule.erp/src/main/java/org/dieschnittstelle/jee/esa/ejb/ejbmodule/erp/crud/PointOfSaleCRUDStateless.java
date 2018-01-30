@@ -19,7 +19,7 @@ public class PointOfSaleCRUDStateless implements PointOfSaleCRUDRemote, PointOfS
 
 	protected static Logger logger = Logger.getLogger(PointOfSaleCRUDStateless.class);
 	
-	@PersistenceContext(unitName = "erp_PU")
+	@PersistenceContext(unitName = "crm_erp_PU")
 	private EntityManager em;
 	
 	/*
@@ -28,7 +28,11 @@ public class PointOfSaleCRUDStateless implements PointOfSaleCRUDRemote, PointOfS
 	@Override
 	//@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public PointOfSale createPointOfSale(PointOfSale pos) {
-		em.persist(pos);
+		logger.info("createPointOfSale(): before persist: " + pos);
+		
+		em.persist(pos);		
+
+		logger.info("createPointOfSale(): after persist: " + pos);
 
 		return pos;
 	}

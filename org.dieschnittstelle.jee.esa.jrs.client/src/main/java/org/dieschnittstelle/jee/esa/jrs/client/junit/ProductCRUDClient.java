@@ -7,10 +7,14 @@ import org.dieschnittstelle.jee.esa.entities.erp.AbstractProduct;
 import org.dieschnittstelle.jee.esa.entities.erp.IndividualisedProductItem;
 
 import org.dieschnittstelle.jee.esa.jrs.IProductCRUDService;
+import org.dieschnittstelle.jee.esa.jrs.ITouchpointCRUDService;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 public class ProductCRUDClient {
 
-	private IProductCRUDService serviceProxy;
+	private IProductCRUDService proxy;
 	
 	protected static Logger logger = Logger.getLogger(ProductCRUDClient.class);
 
@@ -20,30 +24,32 @@ public class ProductCRUDClient {
 		/*
 		 * create a client for the web service using ResteasyClientBuilder and ResteasyWebTarget
 		 */
-		serviceProxy = null;
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		ResteasyWebTarget target = client.target("http://localhost:8888/org.dieschnittstelle.jee.esa.jrs/api/");
+		proxy = target.proxy(IProductCRUDService.class);
 	}
 
 	public AbstractProduct createProduct(IndividualisedProductItem prod) {
-		AbstractProduct created = serviceProxy.createProduct(prod);
+		AbstractProduct created = proxy.createProduct(prod);
 		// as a side-effect we set the id of the created product on the argument before returning
 		prod.setId(created.getId());
 		return created;
 	}
 
 	public List<?> readAllProducts() {
-		return serviceProxy.readAllProducts();
+		return proxy.readAllProducts();
 	}
 
 	public AbstractProduct updateProduct(AbstractProduct update) {
-		return serviceProxy.updateProduct(update.getId(),(IndividualisedProductItem)update);
+		return proxy.updateProduct(update.getId(),(IndividualisedProductItem)update);
 	}
 
 	public boolean deleteProduct(long id) {
-		return serviceProxy.deleteProduct(id);
+		return proxy.deleteProduct(id);
 	}
 
 	public AbstractProduct readProduct(long id) {
-		return serviceProxy.readProduct(id);
+		return proxy.readProduct(id);
 	}
 
 }

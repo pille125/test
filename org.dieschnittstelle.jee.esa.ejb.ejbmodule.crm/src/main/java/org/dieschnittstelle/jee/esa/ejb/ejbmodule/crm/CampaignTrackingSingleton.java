@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  */
 @Startup
 @javax.ejb.ConcurrencyManagement(javax.ejb.ConcurrencyManagementType.CONTAINER)
-public class CampaignTrackingSingleton implements CampaignTrackingRemote {
+public class CampaignTrackingSingleton implements CampaignTrackingRemote, CampaignTrackingLocal {
 
 	protected static Logger logger = Logger.getLogger(CampaignTrackingSingleton.class);
 	

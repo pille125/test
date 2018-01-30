@@ -10,16 +10,17 @@ import org.apache.log4j.Logger;
 
 import javax.persistence.*;
 
-
+@Entity
 public class Campaign extends AbstractProduct implements Serializable {
 
 	protected static Logger logger = Logger.getLogger(Campaign.class);
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4407600000386810001L;
 
+	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
 	private List<ProductBundle> bundles;
 
 	public Campaign() {
@@ -44,8 +45,8 @@ public class Campaign extends AbstractProduct implements Serializable {
 	}
 
 	public String toString() {
-		return "[Campaign " + this.getId() + ", " + this.getName() + ", "
-				+ this.bundles + "]";
+		return "{Campaign " + this.getId() + ", " + this.getName() + ", "
+				+ this.bundles + "}";
 	}
 
 //	public boolean equals(Object other) {

@@ -1,52 +1,56 @@
 package org.dieschnittstelle.jee.esa.ejb.client.ejbclients;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerCRUDRemote;
 import org.dieschnittstelle.jee.esa.entities.crm.Customer;
 import org.dieschnittstelle.jee.esa.ejb.client.Constants;
 
 public class CustomerCRUDClient implements CustomerCRUDRemote {
 
-	private CustomerCRUDRemote ejbProxy;
+	private CustomerCRUDRemote proxy;
 
 	public CustomerCRUDClient() throws Exception {
-		ejbProxy = EJBProxyFactory.getInstance().getProxy(CustomerCRUDRemote.class,Constants.CUSTOMER_CRUD_BEAN_URI);
+		Context context = new InitialContext();
+
+		proxy = (CustomerCRUDRemote) context
+				.lookup(Constants.CUSTOMER_CRUD_BEAN);
 	}
 
 	@Override
 	public Customer readCustomerForEmail(String email) {
-		return ejbProxy.readCustomerForEmail(email);
+		return proxy.readCustomerForEmail(email);
 	}
 
 	@Override
 	public Customer createCustomer(Customer customer) {
-		Customer created = ejbProxy.createCustomer(customer);
+		Customer created = proxy.createCustomer(customer);
 		
 		// as a side-effect, we set the id on the customer object
 		customer.setId(created.getId());
-		// we also set the id of the address, which might have been initially created, as a side-effect
-		customer.getAddress().setId(created.getAddress().getId());
 		
 		return created;
 	}
 
 	@Override
 	public Customer readCustomer(long id) {
-		return ejbProxy.readCustomer(id);
+		return proxy.readCustomer(id);
 	}
 
 	@Override
 	public Customer updateCustomer(Customer customer) {
-		return ejbProxy.updateCustomer(customer);
+		return proxy.updateCustomer(customer);
 	}
 
 	@Override
 	public Customer updateCustomerWithSleep(Customer customer, long sleep) {
-		return ejbProxy.updateCustomerWithSleep(customer, sleep);
+		return proxy.updateCustomerWithSleep(customer, sleep);
 	}
 
 	@Override
 	public boolean deleteCustomer(int id) {
-		return ejbProxy.deleteCustomer(id);
+		return proxy.deleteCustomer(id);
 	}
 
 }

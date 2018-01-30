@@ -36,11 +36,10 @@ public class StationaryTouchpoint extends AbstractTouchpoint  implements Seriali
 	private static final long serialVersionUID = -6123798695442913993L;
 	
 	/**
-	 * we assume a OneToOne association: this is for demonstrating simple cascading of composition-type associations,
-	 * see Customer->Address for a more intuitive handling of an "address" association as ManyToOne
+	 * we assume a onetoone assoc
 	 */
-	@OneToOne(cascade={CascadeType.ALL})
-	private Address address;
+	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE})
+	private Address location;
 	
 	public StationaryTouchpoint() {
 		logger.info("<constructor>");
@@ -53,19 +52,19 @@ public class StationaryTouchpoint extends AbstractTouchpoint  implements Seriali
 	public StationaryTouchpoint(int erpPointOfSaleId,String name,Address address) {
 		super.setErpPointOfSaleId(erpPointOfSaleId);
 		super.setName(name);
-		this.setAddress(address);
+		this.setLocation(address);
 	}
 	
 	public String toString() {
-		return "[StationaryTouchpoint " + this.id + "/" + this.erpPointOfSaleId + " " + this.name + " " + this.address + "]";
+		return "{StationaryTouchpoint " + this.id + "/" + this.erpPointOfSaleId + " " + this.name + " " + this.location + "}";
 	}
 	
-	public Address getAddress() {
-		return address;
+	public Address getLocation() {
+		return location;
 	}
 
-	public void setAddress(Address address) {
-		this.address = address;
+	public void setLocation(Address location) {
+		this.location = location;
 	}
 	
 	/*

@@ -7,7 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.ShoppingCartLocal;
-import org.dieschnittstelle.jee.esa.entities.crm.ShoppingCartItem;
+import org.dieschnittstelle.jee.esa.entities.crm.CrmProductBundle;
 import org.apache.log4j.Logger;
 
 /**
@@ -31,8 +31,8 @@ public class ShoppingCartModel {
 //	@EJB(lookup="java:global/org.dieschnittstelle.jee.esa.ejb/org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm/ShoppingCartStateful!ShoppingCartRemote")
 //	private ShoppingCartRemote shoppingCart;
 	
-	public List<ShoppingCartItem> getItems() {
-		return shoppingCart.getItems();
+	public List<CrmProductBundle> getProductBundles() {
+		return shoppingCart.getProductBundles();
 	}
 	
 	/**
@@ -41,9 +41,9 @@ public class ShoppingCartModel {
 	 * @param bundle
 	 * @return
 	 */
-	public void addProduct(ShoppingCartItem bundle) {
+	public void addProduct(CrmProductBundle bundle) {
 		logger.info("addProduct()");
-		shoppingCart.addItem(bundle);
+		shoppingCart.addProductBundle(bundle);
 	}
 	
 	/*
@@ -53,8 +53,8 @@ public class ShoppingCartModel {
 	public int getNumOfProductsInCart() {
 		logger.info("countProductsInCart()");
 		int totalCount = 0;
-		for (ShoppingCartItem item : shoppingCart.getItems()) {
-			totalCount += item.getUnits();
+		for (CrmProductBundle productBundle : shoppingCart.getProductBundles()) {
+			totalCount += productBundle.getUnits();
 		}
 
 		return totalCount;
@@ -63,9 +63,9 @@ public class ShoppingCartModel {
 	public int getPriceOfProductsInCart() {
 		logger.info("countProductsInCart()");
 		int totalPrice = 0;
-		for (ShoppingCartItem item : shoppingCart.getItems()) {
-			totalPrice += item.getUnits()
-					* item.getProductObj().getPrice();
+		for (CrmProductBundle productBundle : shoppingCart.getProductBundles()) {
+			totalPrice += productBundle.getUnits()
+					* productBundle.getProductObj().getPrice();
 		}
 
 		return totalPrice;

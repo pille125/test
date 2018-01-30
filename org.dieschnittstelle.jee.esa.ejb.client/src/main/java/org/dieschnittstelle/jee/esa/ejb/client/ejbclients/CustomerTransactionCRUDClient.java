@@ -1,9 +1,10 @@
 package org.dieschnittstelle.jee.esa.ejb.client.ejbclients;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.dieschnittstelle.jee.esa.ejb.ejbmodule.crm.crud.CustomerTransactionCRUDRemote;
 import org.dieschnittstelle.jee.esa.entities.crm.AbstractTouchpoint;
 import org.dieschnittstelle.jee.esa.entities.crm.Customer;
@@ -12,47 +13,29 @@ import org.dieschnittstelle.jee.esa.ejb.client.Constants;
 
 public class CustomerTransactionCRUDClient implements CustomerTransactionCRUDRemote {
 
-	protected static Logger logger = Logger.getLogger(CustomerTransactionCRUDClient.class);
-
-	private CustomerTransactionCRUDRemote ejbProxy;
+	private CustomerTransactionCRUDRemote proxy;
 	
 	public CustomerTransactionCRUDClient() throws Exception {
-		this.ejbProxy = EJBProxyFactory.getInstance().getProxy(CustomerTransactionCRUDRemote.class,Constants.TRANSACTIONS_CRUD_BEAN_URI);
+		Context context = new InitialContext();		
+		this.proxy = (CustomerTransactionCRUDRemote)context.lookup(Constants.TRANSACTIONS_CRUD_BEAN);
 	}
 	
 	@Override
 	public Collection<CustomerTransaction> readAllTransactionsForTouchpoint(
 			AbstractTouchpoint touchpoint) {
-		try {
-			return ejbProxy.readAllTransactionsForTouchpoint(touchpoint);
-		}
-		catch (Exception e) {
-			logger.warn("readAllTransactionsForTouchpoint(): got exception: " + e + ". Look at server-side log for further information");
-			return new ArrayList<CustomerTransaction>();
-		}
+		return proxy.readAllTransactionsForTouchpoint(touchpoint);
 	}
 
 	@Override
 	public Collection<CustomerTransaction> readAllTransactionsForCustomer(
 			Customer customer) {
-		try {
-			return ejbProxy.readAllTransactionsForCustomer(customer);
-		}
-		catch (Exception e) {
-			logger.warn("readAllTransactionsForCustomer(): got exception: " + e + ". Look at server-side log for further information");
-			return new ArrayList<CustomerTransaction>();
-		}
+		return proxy.readAllTransactionsForCustomer(customer);
 	}
 
 	@Override
 	public Collection<CustomerTransaction> readAllTransactionsForTouchpointAndCustomer(
 			AbstractTouchpoint touchpoint, Customer customer) {
-		// this method is currently not supported by the rest interface
-		if (EJBProxyFactory.getInstance().usesWebAPIAsDefault()) {
-			logger.warn("readAllTransactionsForTouchpointAndCustomer(): ignore as operation is currently not supported by web api");
-			return new ArrayList<CustomerTransaction>();
-		}
-		return ejbProxy.readAllTransactionsForTouchpointAndCustomer(touchpoint, customer);
+		return proxy.readAllTransactionsForTouchpointAndCustomer(touchpoint, customer);
 	}
 
 }

@@ -2,7 +2,6 @@ package org.dieschnittstelle.jee.esa.basics;
 
 import org.dieschnittstelle.jee.esa.basics.reflection.ReflectedStockItemBuilder;
 
-import static org.dieschnittstelle.jee.esa.utils.Utils.*;
 
 public class ShowReflection {
 	
